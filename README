@@ -1,0 +1,5 @@
+Админка для хранения, редактирования пользовательских сведений и вопросов по категориям, json-api
+
+Если джанга ругается в консоли на добавленные записи в кирилке, выполнить в командной оболочке мускула:
+ALTER DATABASE django_db CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+ALTER TABLE django_admin_log MODIFY object_repr VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL;
