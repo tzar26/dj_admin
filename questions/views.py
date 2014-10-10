@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.http import HttpResponse
 from questions.models import Category, Question, Choice
+from django.conf import settings
 import json
 
 def req_question(request):
@@ -27,15 +28,11 @@ def get_question(request):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def get_poll(request):
-    quantity = 10
-    duplicate_retry_abort = 10
-    # import pdb;pdb.set_trace()
-
     response_data = {}
     questions = []
     qids = []
     retry = 0
-    while (len(questions)<10) and (retry < duplicate_retry_abort):
+    while (len(questions)<settings.POLL_LENGTH) and (retry < settings.DUPLICATE_QUESTION_RETRY_ABORT):
         question = req_question(request)
         if question.get('error'):
             return HttpResponse(json.dumps(question), content_type="application/json")
@@ -48,4 +45,18 @@ def get_poll(request):
             retry += 1
     response_data['quantity'] = len(questions)
     response_data['questions'] = questions
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+def get_categories(request):
+    # import pdb;pdb.set_trace()
+    objects = Category.objects.all()
+    response_data = {}
+    categories = []
+    for obj in objects:
+        categories.append({
+            'id': obj.id,
+            'name': obj.name
+        })
+    response_data['quantity'] = len(categories)
+    response_data['categories'] = categories
     return HttpResponse(json.dumps(response_data), content_type="application/json")
