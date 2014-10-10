@@ -6,7 +6,7 @@ class Command(BaseCommand):
     categories_prefix = 'категория '
     categories_pool_length = 3
     questions_prefix = 'вопрос '
-    questions_pool_length = 20
+    questions_pool_length = 100
 
     def handle(self, *args, **options):
         if Category.objects.count() < 1:
@@ -16,6 +16,7 @@ class Command(BaseCommand):
             print 'Таблица категорий наполнена'
         else:
             print 'Таблица категорий не пустая. Создание данных пропускается'
+
         if Question.objects.count() < 1:
             import random
             for i in range(0, self.questions_pool_length):
