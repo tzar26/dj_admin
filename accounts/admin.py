@@ -18,6 +18,7 @@ from accounts.models import Account, Session
 class AccountAdmin(admin.ModelAdmin):
     model = Account
     list_display = ('login', 'group_list')
+    filter_horizontal = ('group',)
     # inlines = [GroupsInline]
     # formfield_overrides = {
     #     models.TextField: {'widget': RichTextEditorWidget},

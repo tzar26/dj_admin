@@ -6,6 +6,7 @@ from questions.models import Category, Question, Choice
 class CategoryAdmin(admin.ModelAdmin):
     model = Category
     list_display = ('name', 'group_list')
+    filter_horizontal = ('group',)
 
     def group_list(self, obj):
         return ','.join(obj.group.values_list('name', flat=True))

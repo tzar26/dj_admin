@@ -5,7 +5,7 @@ from groups.models import Group
 
 class Category(models.Model):
     name = models.CharField('название категории', max_length=200)
-    group = models.ManyToManyField(Group, verbose_name='группы')
+    group = models.ManyToManyField(Group, verbose_name=u'группы')
 
     class Meta:
         verbose_name = 'категория'
@@ -15,7 +15,7 @@ class Category(models.Model):
         return self.name
 
 class Question(models.Model):
-    category = models.ForeignKey(Category, verbose_name='категория вопроса')
+    category = models.ForeignKey(Category, verbose_name=u'категория вопроса')
     question = models.CharField('вопрос', max_length=200)
     answer = models.CharField('верный ответ', max_length=200)
 
@@ -27,7 +27,7 @@ class Question(models.Model):
         return self.question
 
 class Choice(models.Model):
-    question = models.ForeignKey(Question, verbose_name='вопрос')
+    question = models.ForeignKey(Question, verbose_name=u'вопрос')
     choice_text = models.CharField('выбор', max_length=200)
 
     class Meta:

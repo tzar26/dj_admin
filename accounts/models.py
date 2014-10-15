@@ -8,7 +8,7 @@ class Account(models.Model):
     login = models.CharField('логин', max_length=30)
     password = models.CharField('пароль', max_length=50)
     avatar = models.CharField('аватар',max_length=150)
-    group = models.ManyToManyField(Group, verbose_name='группы')
+    group = models.ManyToManyField(Group, verbose_name=u'группы')
     reg_date = models.DateTimeField('дата регистрации', default=datetime.today)
 
     class Meta:
