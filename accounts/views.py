@@ -6,9 +6,6 @@ from accounts.models import Account, Session
 import json
 import os
 
-# from users.models import Account
-from django.contrib import auth
-
 def get_credentials(username=None, password=None):
     if (not(username and password)):
         return { 'error': 'not enough credentials'}
@@ -18,7 +15,6 @@ def get_credentials(username=None, password=None):
         return { 'error': 'login or password is incorrect'}
 
     response_data = {}
-    # import pdb;pdb.set_trace()
     if credentials is not None:
         credential = credentials[0]
         response_data['username'] = credential.login
@@ -33,44 +29,38 @@ def get_credentials(username=None, password=None):
     else:
         response_data['error'] = 'login or password is incorrect'
     return response_data
-    # return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-from django.shortcuts import render_to_response
-
-def token_required(request):
-    pass
-
-def generate_token():
-    return ''.join([hex(ord(c)).replace('0x','') for c in os.urandom(16)])
 
 def login(request):
-    pass
-
-def login_required(request):
-    return
-    # if request.COOKIES.get('token') is not None:
-    #     return HttpResponseRedirect(request.path)
-    username = request.POST.get('username')
-    password = request.POST.get('password')
+    def generate_token():
+        return ''.join([hex(ord(c)).replace('0x','') for c in os.urandom(16)])
+    username = request.GET.get('username')
+    password = request.GET.get('password')
     user = get_credentials(username=username, password=password)
     if not user.get('error'):
-        import pdb;pdb.set_trace()
         token = generate_token()
         session = Session(
             user = Account.objects.get(login = username),
-            token = token
+            token = token,
         )
         session.save()
         response = HttpResponseRedirect(request.path)
         response.set_cookie('token', token)
-        return response
+        return HttpResponse(json.dumps({'token': token}), content_type="application/json")
     else:
-        return render(request, 'login.html', {})
-        # return render_to_response("login.html")
+        return HttpResponse(json.dumps({'error': 'login or password incorrect'}), content_type="application/json")
 
+from django.core.exceptions import ObjectDoesNotExist
 def logout(request):
-    response = HttpResponseRedirect('/groups')
-    if request.COOKIES.get('token') is not None:
-        response.delete_cookie('token')
-    # Перенаправление на страницу.
-    return response
+    token = request.GET.get('token')
+    if not token:
+        return HttpResponse(json.dumps({'error': 'incorrect request'}), content_type="application/json")
+
+    try:
+        session = Session.objects.get(token=token)
+        session.delete()
+        return HttpResponse(json.dumps({'message': 'logged out'}), content_type="application/json")
+    except ObjectDoesNotExist, ex:
+        return HttpResponse(json.dumps({'error': 'unactual request'}), content_type="application/json")
+    except Exception, ex:
+        return HttpResponse(json.dumps({'error': 'unknown error, try later'}), content_type="application/json")

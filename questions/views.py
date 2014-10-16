@@ -4,7 +4,6 @@ from django.http import HttpResponse
 from questions.models import Category, Question, Choice
 from django.conf import settings
 import json
-from django.contrib.auth.decorators import login_required
 
 
 def req_question(request):
@@ -25,13 +24,13 @@ def req_question(request):
         response_data['error'] = 'no questions in category(categories)'
     return response_data
 
-# @login_required
 def get_question(request):
+    #TODO: проверка token и его состояния просрочки
     response_data = req_question(request)
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-# @login_required
 def get_poll(request):
+    #TODO: проверка token и его состояния просрочки
     response_data = {}
     questions = []
     qids = []
@@ -51,9 +50,8 @@ def get_poll(request):
     response_data['questions'] = questions
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-# @login_required
 def get_categories(request):
-    # import pdb;pdb.set_trace()
+    #TODO: проверка token и его состояния просрочки
     objects = Category.objects.all()
     response_data = {}
     categories = []
